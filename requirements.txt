@@ -9,3 +9,6 @@ librosa
 pysptk
 pyworld
 resemblyzer
+tensorboardX
+gradio
+gdown

@@ -30,7 +30,6 @@ class Image_translation_block():
 
     def __init__(self, opt_parser, single_test=False):
         print('Run on device {}'.format(device))
-
         # for key in vars(opt_parser).keys():
         #     print(key, ':', vars(opt_parser)[key])
         self.opt_parser = opt_parser
@@ -42,7 +41,7 @@ class Image_translation_block():
             self.G = ResUnetGenerator(input_nc=6, output_nc=3, num_downs=6, use_dropout=False)
 
         if (opt_parser.load_G_name != ''):
-            ckpt = torch.load(opt_parser.load_G_name)
+            ckpt = torch.load(opt_parser.load_G_name, map_location=torch.device('cuda'))
             try:
                 self.G.load_state_dict(ckpt['G'])
             except:
@@ -154,7 +153,7 @@ class Image_translation_block():
 
             if(self.opt_parser.comb_fan_awing):
                 image_in, image_out, fan_pred_landmarks = batch
-                fan_pred_landmarks = fan_pred_landmarks.reshape(-1, 68, 3).detach().cpu().numpy()
+                fan_pred_landmarks = fan_pred_landmarks.reshape(-1, 68, 3).detach().cuda().numpy()
             elif(self.opt_parser.add_audio_in):
                 image_in, image_out, audio_in = batch
                 audio_in = audio_in.reshape(-1, 1, 256, 256).to(device)
@@ -167,7 +166,7 @@ class Image_translation_block():
                     image_in.reshape(-1, 3, 256, 256).to(device), image_out.reshape(-1, 3, 256, 256).to(device)
                 inputs = image_out
                 outputs, boundary_channels = self.fa_model(inputs)
-                pred_heatmap = outputs[-1][:, :-1, :, :].detach().cpu()
+                pred_heatmap = outputs[-1][:, :-1, :, :].detach().cuda()
                 pred_landmarks, _ = get_preds_fromhm(pred_heatmap)
                 pred_landmarks = pred_landmarks.numpy() * 4
 
@@ -177,7 +176,7 @@ class Image_translation_block():
                     fl_rest = pred_landmarks[:, 51:, :]
                     pred_landmarks = np.concatenate([fl_jaw_eyebrow, fl_rest], axis=1).astype(np.int)
 
-            # draw landmark on while bg
+            # draw landmark on white bg
             img_fls = []
             for pred_fl in pred_landmarks:
                 img_fl = np.ones(shape=(256, 256, 3)) * 255.0
@@ -215,17 +214,17 @@ class Image_translation_block():
 
             # log
             if(self.opt_parser.write):
-                self.writer.add_scalar('loss', loss.cpu().detach().numpy(), self.count)
-                self.writer.add_scalar('loss_l1', loss_l1.cpu().detach().numpy(), self.count)
-                self.writer.add_scalar('loss_vgg', loss_vgg.cpu().detach().numpy(), self.count)
+                self.writer.add_scalar('loss', loss.cuda().detach().numpy(), self.count)
+                self.writer.add_scalar('loss_l1', loss_l1.cuda().detach().numpy(), self.count)
+                self.writer.add_scalar('loss_vgg', loss_vgg.cuda().detach().numpy(), self.count)
                 self.count += 1
 
             # save image to track training process
             if (i % self.opt_parser.jpg_freq == 0):
-                vis_in = np.concatenate([image_in[0, 3:6].cpu().detach().numpy().transpose((1, 2, 0)),
-                                         image_in[0, 0:3].cpu().detach().numpy().transpose((1, 2, 0))], axis=1)
-                vis_out = np.concatenate([image_out[0].cpu().detach().numpy().transpose((1, 2, 0)),
-                                          g_out[0].cpu().detach().numpy().transpose((1, 2, 0))], axis=1)
+                vis_in = np.concatenate([image_in[0, 3:6].cuda().detach().numpy().transpose((1, 2, 0)),
+                                         image_in[0, 0:3].cuda().detach().numpy().transpose((1, 2, 0))], axis=1)
+                vis_out = np.concatenate([image_out[0].cuda().detach().numpy().transpose((1, 2, 0)),
+                                          g_out[0].cuda().detach().numpy().transpose((1, 2, 0))], axis=1)
                 vis = np.concatenate([vis_in, vis_out], axis=0)
                 try:
                     os.makedirs(os.path.join(self.opt_parser.jpg_dir, self.opt_parser.name))
@@ -315,7 +314,7 @@ class Image_translation_block():
                     pred_landmarks.append(pred_landmark.numpy() * 4)
                 pred_landmarks = np.concatenate(pred_landmarks, axis=0)
 
-            # draw landmark on while bg
+            # draw landmark on white bg
             img_fls = []
             for pred_fl in pred_landmarks:
                 img_fl = np.ones(shape=(256, 256, 3)) * 255.0
@@ -340,10 +339,11 @@ class Image_translation_block():
 
             image_in, image_out = image_in.to(device), image_out.to(device)
 
+            #this creates the temporary video writer for the image_in tensor 
             writer = cv2.VideoWriter('tmp_{:04d}.mp4'.format(i), cv2.VideoWriter_fourcc(*'mjpg'), 25, (256*4, 256))
 
             for j in range(image_in.shape[0] // 16):
-                g_out = self.G(image_in[j*16:j*16+16])
+                g_out = self.G(image_in[j*16:j*16+16]) #g_out is still our landmark tensor 
                 g_out = torch.tanh(g_out)
 
                 # norm 68 pts
@@ -383,20 +383,36 @@ class Image_translation_block():
             fls[:, 0::3] += 130
             fls[:, 1::3] += 80
 
-        writer = cv2.VideoWriter('out.mp4', cv2.VideoWriter_fourcc(*'mjpg'), 62.5, (256 * 3, 256))
+        writer = cv2.VideoWriter('out.mp4', cv2.VideoWriter_fourcc(*'mjpg'), 62.5, (256, 256)) #changed this to remove *3 from width 
 
         for i, frame in enumerate(fls):
 
             img_fl = np.ones(shape=(256, 256, 3)) * 255
             fl = frame.astype(int)
             img_fl = vis_landmark_on_img(img_fl, np.reshape(fl, (68, 3)))
-            frame = np.concatenate((img_fl, jpg), axis=2).astype(np.float32)/255.0
+            #this is line is concating the arrays along the third dimension (i.e., the color channel dimension).
+            #its creating the live video of the landmarks (not our final video yet)
+            frame = np.concatenate((img_fl, jpg), axis=2).astype(np.float32)/255.0  
 
-            image_in, image_out = frame.transpose((2, 0, 1)), np.zeros(shape=(3, 256, 256))
+
+            #the below code does the following: 
+            # 1. The resulting array has the third dimension (i.e., color channel) first, 
+            # the first dimension (i.e., height) second, and the second dimension (i.e., width) third. The transposed array 
+            # is assigned to the image_in variable.
+            # 2. Creates a new numpy array of shape (3, 256, 256) filled with zeros and assigns 
+            # it to the image_out variable. The shape argument specifies that the resulting array 
+            # should have 3 color channels, 256 rows, and 256 columns.
+            image_in, image_out = frame.transpose((2, 0, 1)), np.zeros(shape=(3, 256, 256)) 
+
+
             # image_in, image_out = frame.transpose((2, 1, 0)), np.zeros(shape=(3, 256, 256))
-            image_in, image_out = torch.tensor(image_in, requires_grad=False), \
-                                  torch.tensor(image_out, requires_grad=False)
 
+            #this line of code creates two PyTorch tensors from two numpy arrays
+            image_in, image_out = torch.tensor(image_in, requires_grad=False), \
+                                  torch.tensor(image_out, requires_grad=False) 
+
+            #this line of code reshapes two PyTorch tensors to have 4 dimensions with the specified number 
+            # of channels and image dimensions.
             image_in, image_out = image_in.reshape(-1, 6, 256, 256), image_out.reshape(-1, 3, 256, 256)
             image_in, image_out = image_in.to(device), image_out.to(device)
 
@@ -418,11 +434,13 @@ class Image_translation_block():
 
 
             for i in range(g_out.shape[0]):
-                frame = np.concatenate((ref_in[i], g_out[i], fls_in[i]), axis=1) * 255.0
-                writer.write(frame.astype(np.uint8))
+                #fls here is not our original file still landmarks though not tensors , g_out might be it though
+                # frame = np.concatenate((ref_in[i], g_out[i], fls_in[i]), axis=1) * 255.0 
+                frame = g_out[i] * 255.0 
+                writer.write(frame.astype(np.uint8)) #this is generating our final video 
 
         writer.release()
-        print('Time - only video:', time.time() - st)
+        print('Time - only video:', time.time() - st)  
 
         if(filename is None):
             filename = 'v'
