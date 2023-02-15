@@ -30,10 +30,10 @@ parser.add_argument('--inner_lip', default=False, action='store_true', help='add
 
 parser.add_argument('--out', type=str, default='out.mp4')
 
-parser.add_argument('--load_AUTOVC_name', type=str, default='examples/ckpt/ckpt_autovc.pth')
-parser.add_argument('--load_a2l_G_name', type=str, default='examples/ckpt/ckpt_speaker_branch.pth') #ckpt_audio2landmark_g.pth') #
-parser.add_argument('--load_a2l_C_name', type=str, default='examples/ckpt/ckpt_content_branch.pth') #ckpt_audio2landmark_c.pth')
-parser.add_argument('--load_G_name', type=str, default='examples/ckpt/ckpt_116_i2i_comb.pth') #ckpt_i2i_finetune_150.pth') #ckpt_image2image.pth') #
+parser.add_argument('--load_AUTOVC_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_autovc.pth')
+parser.add_argument('--load_a2l_G_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_speaker_branch.pth') #ckpt_audio2landmark_g.pth') #
+parser.add_argument('--load_a2l_C_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_content_branch.pth') #ckpt_audio2landmark_c.pth')
+parser.add_argument('--load_G_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_116_i2i_comb.pth') #ckpt_i2i_finetune_150.pth') #ckpt_image2image.pth') #
 
 parser.add_argument('--amp_lip_x', type=float, default=2.0)
 parser.add_argument('--amp_lip_y', type=float, default=2.0)
@@ -77,12 +77,12 @@ ains = glob.glob1('examples', '*.wav')
 ains = [item for item in ains if item is not 'tmp.wav']
 ains.sort()
 for ain in ains:
-    os.system('ffmpeg -y -loglevel error -i examples/{} -ar 16000 examples/tmp.wav'.format(ain))
-    shutil.copyfile('examples/tmp.wav', 'examples/{}'.format(ain))
+    os.system('ffmpeg -y -loglevel error -i MakeItTalk/examples/{} -ar 16000 MakeItTalk/examples/tmp.wav'.format(ain))
+    shutil.copyfile('MakeItTalk/examples/tmp.wav', 'MakeItTalk/examples/{}'.format(ain))
 
     # au embedding
     from thirdparty.resemblyer_util.speaker_emb import get_spk_emb
-    me, ae = get_spk_emb('examples/{}'.format(ain))
+    me, ae = get_spk_emb('MakeItTalk/examples/{}'.format(ain))
     au_emb.append(me.reshape(-1))
 
     print('Processing audio file', ain)
@@ -91,8 +91,8 @@ for ain in ains:
            autovc_model_path=opt_parser.load_AUTOVC_name)
     au_data += au_data_i
     # os.remove(os.path.join('examples', 'tmp.wav'))
-if(os.path.isfile('examples/tmp.wav')):
-    os.remove('examples/tmp.wav')
+if(os.path.isfile('MakeItTalk/examples/tmp.wav')):
+    os.remove('MakeItTalk/examples/tmp.wav')
 
 fl_data = []
 rot_tran, rot_quat, anchor_t_shape = [], [], []

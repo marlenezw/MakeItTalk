@@ -444,8 +444,8 @@ class Image_translation_block():
 
         if(filename is None):
             filename = 'v'
-        os.system('ffmpeg -loglevel error -y -i out.mp4 -i {} -pix_fmt yuv420p -strict -2 examples/{}_{}.mp4'.format(
-            'examples/'+filename[9:-16]+'.wav',
+        os.system('ffmpeg -loglevel error -y -i out.mp4 -i {} -pix_fmt yuv420p -strict -2 MakeItTalk/examples/{}_{}.mp4'.format(
+            'MakeItTalk/examples/'+filename[9:-16]+'.wav',
             prefix, filename[:-4]))
         # os.system('rm out.mp4')
 

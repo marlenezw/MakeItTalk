@@ -36,7 +36,7 @@ class Audio2landmark_model():
         self.std_face_id = self.std_face_id.reshape(1, 204)
         self.std_face_id = torch.tensor(self.std_face_id, requires_grad=False, dtype=torch.float).to(device)
 
-        self.eval_data = Audio2landmark_Dataset(dump_dir='examples/dump',
+        self.eval_data = Audio2landmark_Dataset(dump_dir='MakeItTalk/examples/dump',
                                                 dump_name='random',
                                                 status='val',
                                                num_window_frames=18,

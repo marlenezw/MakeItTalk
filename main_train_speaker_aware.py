@@ -90,8 +90,8 @@ parser.add_argument('--use_prior_net', default=True, action='store_true')
 parser.add_argument('--transformer_d_model', default=32, type=int)
 parser.add_argument('--transformer_N', default=2, type=int)
 parser.add_argument('--transformer_heads', default=2, type=int)
-parser.add_argument('--load_a2l_C_name', type=str, default='examples/ckpt/ckpt_audio2landmark_c.pth')
-parser.add_argument('--init_content_encoder', type=str, default='examples/ckpt/ckpt_audio2landmark_c.pth') #  'tt_lipwpre_prior_useclose/ckpt_last_epoch_20.pth')
+parser.add_argument('--load_a2l_C_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_audio2landmark_c.pth')
+parser.add_argument('--init_content_encoder', type=str, default='MakeItTalk/examples/ckpt/ckpt_audio2landmark_c.pth') #  'tt_lipwpre_prior_useclose/ckpt_last_epoch_20.pth')
 parser.add_argument('--load_a2l_G_name', type=str, default='/mnt/ntfs/Dataset/TalkingToon/VoxCeleb2/ckpt/local_da_merge_3/ckpt_e_50.pth') #
 
 

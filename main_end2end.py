@@ -34,10 +34,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--jpg', type=str, default='{}.jpg'.format(default_head_name))
 parser.add_argument('--close_input_face_mouth', default=CLOSE_INPUT_FACE_MOUTH, action='store_true')
 
-parser.add_argument('--load_AUTOVC_name', type=str, default='examples/ckpt/ckpt_autovc.pth')
-parser.add_argument('--load_a2l_G_name', type=str, default='examples/ckpt/ckpt_speaker_branch.pth')
-parser.add_argument('--load_a2l_C_name', type=str, default='examples/ckpt/ckpt_content_branch.pth') #ckpt_audio2landmark_c.pth')
-parser.add_argument('--load_G_name', type=str, default='examples/ckpt/ckpt_116_i2i_comb.pth') #ckpt_image2image.pth') #ckpt_i2i_finetune_150.pth') #c
+parser.add_argument('--load_AUTOVC_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_autovc.pth')
+parser.add_argument('--load_a2l_G_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_speaker_branch.pth')
+parser.add_argument('--load_a2l_C_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_content_branch.pth') #ckpt_audio2landmark_c.pth')
+parser.add_argument('--load_G_name', type=str, default='MakeItTalk/examples/ckpt/ckpt_116_i2i_comb.pth') #ckpt_image2image.pth') #ckpt_i2i_finetune_150.pth') #c
 
 parser.add_argument('--amp_lip_x', type=float, default=2.)
 parser.add_argument('--amp_lip_y', type=float, default=2.)
@@ -67,7 +67,7 @@ parser.add_argument('--use_11spk_only', default=False, action='store_true')
 opt_parser = parser.parse_args()
 
 ''' STEP 1: preprocess input single image '''
-img =cv2.imread('examples/' + opt_parser.jpg)
+img =cv2.imread('MakeItTalk/examples/' + opt_parser.jpg)
 predictor = face_alignment.FaceAlignment(face_alignment.LandmarksType._3D, device='cuda', flip_input=True)
 shapes = predictor.get_landmarks(img)
 if (not shapes or len(shapes) != 1):
@@ -99,12 +99,12 @@ ains = glob.glob1('examples', '*.wav')
 ains = [item for item in ains if item is not 'tmp.wav']
 ains.sort()
 for ain in ains:
-    os.system('ffmpeg -y -loglevel error -i examples/{} -ar 16000 examples/tmp.wav'.format(ain))
-    shutil.copyfile('examples/tmp.wav', 'examples/{}'.format(ain))
+    os.system('ffmpeg -y -loglevel error -i MakeItTalk/examples/{} -ar 16000 MakeItTalk/examples/tmp.wav'.format(ain))
+    shutil.copyfile('MakeItTalk/examples/tmp.wav', 'MakeItTalk/examples/{}'.format(ain))
 
     # au embedding
     from thirdparty.resemblyer_util.speaker_emb import get_spk_emb
-    me, ae = get_spk_emb('examples/{}'.format(ain))
+    me, ae = get_spk_emb('MakeItTalk/examples/{}'.format(ain))
     au_emb.append(me.reshape(-1))
 
     print('Processing audio file', ain)
@@ -113,8 +113,8 @@ for ain in ains:
     au_data_i = c.convert_single_wav_to_autovc_input(audio_filename=os.path.join('examples', ain),
            autovc_model_path=opt_parser.load_AUTOVC_name)
     au_data += au_data_i
-if(os.path.isfile('examples/tmp.wav')):
-    os.remove('examples/tmp.wav')
+if(os.path.isfile('MakeItTalk/examples/tmp.wav')):
+    os.remove('MakeItTalk/examples/tmp.wav')
 
 # landmark fake placeholder
 fl_data = []

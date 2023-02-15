@@ -62,7 +62,7 @@ sudo apt install --install-recommends winehq-stable
 
 ## Pre-trained Models
 
-Download the following pre-trained models to `examples/ckpt` folder for testing your own animation.
+Download the following pre-trained models to `MakeItTalk/examples/ckpt` folder for testing your own animation.
 
 | Model |  Link to the model | 
 | :-------------: | :---------------: |
@@ -74,7 +74,7 @@ Download the following pre-trained models to `examples/ckpt` folder for testing 
 
 ## Animate You Portraits!
 
-- Download pre-trained embedding [[here]](https://drive.google.com/file/d/18-0CYl5E6ungS3H4rRSHjfYvvm-WwjTI/view?usp=sharing) and save to `examples/dump` folder.
+- Download pre-trained embedding [[here]](https://drive.google.com/file/d/18-0CYl5E6ungS3H4rRSHjfYvvm-WwjTI/view?usp=sharing) and save to `MakeItTalk/examples/dump` folder.
 
 ### _Nature Human Faces / Paintings_
 
@@ -118,7 +118,7 @@ to amply lip motion (in x/y-axis direction) and head motion displacements, defau
 - put the cartoon image under `examples_cartoon`
 
 - install conda environment `foa_env_py2` (tested on python 2) for Face-of-art (https://github.com/papulke/face-of-art).
- Download the pre-trained weight [here](https://www.dropbox.com/sh/hrxcyug1bmbj6cs/AAAxq_zI5eawcLjM8zvUwaXha?dl=0) and put it under `examples/ckpt`. 
+ Download the pre-trained weight [here](https://www.dropbox.com/sh/hrxcyug1bmbj6cs/AAAxq_zI5eawcLjM8zvUwaXha?dl=0) and put it under `MakeItTalk/examples/ckpt`. 
  Activate the environment.
 
 ```
