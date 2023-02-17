@@ -42,7 +42,7 @@ class Audio2landmark_Dataset(data.Dataset):
         self.fl_data = [self.fl_data[i] for i in valid_idx]
         self.au_data = [self.au_data[i] for i in valid_idx]
 
-        au_mean_std = np.loadtxt('src/dataset/utils/MEAN_STD_AUTOVC_RETRAIN_MEL_AU.txt')
+        au_mean_std = np.loadtxt('MakeItTalk/src/dataset/utils/MEAN_STD_AUTOVC_RETRAIN_MEL_AU.txt')
         au_mean, au_std = au_mean_std[0:au_mean_std.shape[0]//2], au_mean_std[au_mean_std.shape[0]//2:]
 
         self.au_data = [((au - au_mean) / au_std, info) for au, info in self.au_data]
@@ -229,7 +229,7 @@ class Speaker_aware_branch_Dataset(data.Dataset):
         #     print('SAVE!')
 
 
-        au_mean_std = np.loadtxt('src/dataset/utils/MEAN_STD_AUTOVC_RETRAIN_MEL_AU.txt') # np.mean(self.au_data[0][0]), np.std(self.au_data[0][0])
+        au_mean_std = np.loadtxt('MakeItTalk/src/dataset/utils/MEAN_STD_AUTOVC_RETRAIN_MEL_AU.txt') # np.mean(self.au_data[0][0]), np.std(self.au_data[0][0])
         au_mean, au_std = au_mean_std[0:au_mean_std.shape[0]//2], au_mean_std[au_mean_std.shape[0]//2:]
 
         self.au_data = [((au - au_mean) / au_std, info) for au, info in self.au_data]

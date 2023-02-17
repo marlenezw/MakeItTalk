@@ -211,7 +211,7 @@ class AutoVC_mel_Convertor():
         g_checkpoint = torch.load(autovc_model_path, map_location=device)
         G.load_state_dict(g_checkpoint['model'])
 
-        emb = np.loadtxt('src/autovc/retrain_version/obama_emb.txt')
+        emb = np.loadtxt('MakeItTalk/src/autovc/retrain_version/obama_emb.txt')
         emb_trg = torch.from_numpy(emb[np.newaxis, :].astype('float32')).to(device)
 
         aus = []

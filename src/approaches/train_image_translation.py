@@ -153,7 +153,7 @@ class Image_translation_block():
 
             if(self.opt_parser.comb_fan_awing):
                 image_in, image_out, fan_pred_landmarks = batch
-                fan_pred_landmarks = fan_pred_landmarks.reshape(-1, 68, 3).detach().cuda().numpy()
+                fan_pred_landmarks = fan_pred_landmarks.reshape(-1, 68, 3).detach().cpu().numpy()
             elif(self.opt_parser.add_audio_in):
                 image_in, image_out, audio_in = batch
                 audio_in = audio_in.reshape(-1, 1, 256, 256).to(device)
@@ -444,8 +444,8 @@ class Image_translation_block():
 
         if(filename is None):
             filename = 'v'
-        os.system('ffmpeg -loglevel error -y -i out.mp4 -i {} -pix_fmt yuv420p -strict -2 examples/{}_{}.mp4'.format(
-            'examples/'+filename[9:-16]+'.wav',
+        os.system('ffmpeg -loglevel error -y -i out.mp4 -i {} -pix_fmt yuv420p -strict -2 MakeItTalk/examples/{}_{}.mp4'.format(
+            'MakeItTalk/examples/'+filename[9:-16]+'.wav',
             prefix, filename[:-4]))
         # os.system('rm out.mp4')
 

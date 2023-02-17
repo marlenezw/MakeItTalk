@@ -349,7 +349,7 @@ def norm_input_face(shape_3d):
     scale = 1.6 / (shape_3d[0, 0] - shape_3d[16, 0])
     shift = - 0.5 * (shape_3d[0, 0:2] + shape_3d[16, 0:2])
     shape_3d[:, 0:2] = (shape_3d[:, 0:2] + shift) * scale
-    face_std = np.loadtxt('src/dataset/utils/STD_FACE_LANDMARKS.txt').reshape(68, 3)
+    face_std = np.loadtxt('MakeItTalk/src/dataset/utils/STD_FACE_LANDMARKS.txt').reshape(68, 3)
     shape_3d[:, -1] = face_std[:, -1] * 0.1
     shape_3d[:, 0:2] = -shape_3d[:, 0:2]
 

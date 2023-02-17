@@ -63,7 +63,7 @@ class Speaker_aware_branch():
                                                                collate_fn=self.eval_data.my_collate_in_segments)
             print('EVAL num videos: {}'.format(len(self.eval_data)))
         else:
-            self.eval_data = Speaker_aware_branch_Dataset(dump_dir='examples/dump',
+            self.eval_data = Speaker_aware_branch_Dataset(dump_dir='MakeItTalk/examples/dump',
                                                     dump_name='random',
                                                     status='val',
                                                     num_window_frames=18,
@@ -147,7 +147,7 @@ class Speaker_aware_branch():
                     inputs_fl, inputs_au, inputs_emb, _, _, _ = batch
                     self.test_embs[video_name.split('_x_')[1]] = inputs_emb[0]
         else:
-            self.emb_data = Speaker_aware_branch_Dataset(dump_dir='examples/dump',
+            self.emb_data = Speaker_aware_branch_Dataset(dump_dir='MakeItTalk/examples/dump',
                                                          dump_name='celeb_normrot',
                                                          status='val',
                                                          num_window_frames=18,
@@ -604,7 +604,7 @@ class Speaker_aware_branch():
 
                 fake_fls_np = np.concatenate(fls_pred_pos_list)
                 filename = 'pred_fls_{}_{}.txt'.format(video_name.split('/')[-1], key)
-                np.savetxt(os.path.join('examples', filename), fake_fls_np, fmt='%.6f')
+                np.savetxt(os.path.join('MakeItTalk/examples', filename), fake_fls_np, fmt='%.6f')
 
 
     def __close_face_lip__(self, fl):

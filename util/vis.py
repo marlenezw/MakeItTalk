@@ -36,7 +36,7 @@ class Vis():
         fls = fls.reshape((-1, 68, 3))
         fls = fls.astype(int)
 
-        writer = cv2.VideoWriter(os.path.join('examples', 'tmp.mp4'),
+        writer = cv2.VideoWriter(os.path.join('MakeItTalk/examples', 'tmp.mp4'),
                                  cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (400, 400))
 
         frames = np.min((fls.shape[0], frames))
@@ -50,17 +50,17 @@ class Vis():
         if(audio_filenam is not None):
             print(audio_filenam)
             os.system('ffmpeg -y -i {} -i {} -strict -2 -shortest {}'.format(
-                os.path.join('examples', 'tmp.mp4'),
+                os.path.join('MakeItTalk/examples', 'tmp.mp4'),
                 audio_filenam,
-                os.path.join('examples', '{}_av.mp4'.format(filename))
+                os.path.join('MakeItTalk/examples', '{}_av.mp4'.format(filename))
             ))
         else:
             os.system('ffmpeg -y -i {} {}'.format(
-                os.path.join('examples', 'tmp.mp4'),
-                os.path.join('examples', '{}_av.mp4'.format(filename))
+                os.path.join('MakeItTalk/examples', 'tmp.mp4'),
+                os.path.join('MakeItTalk/examples', '{}_av.mp4'.format(filename))
             ))
 
-        os.remove(os.path.join('examples', 'tmp.mp4'))
+        os.remove(os.path.join('MakeItTalk/examples', 'tmp.mp4'))
 
 
 

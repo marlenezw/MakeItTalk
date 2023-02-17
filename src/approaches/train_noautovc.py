@@ -381,7 +381,7 @@ class Speaker_aware_branch():
 
                 fake_fls_np = np.concatenate(fls_pred_pos_list)
                 filename = 'pred_fls_{}_{}.txt'.format(video_name.split('/')[-1], key)
-                np.savetxt(os.path.join('examples', filename), fake_fls_np, fmt='%.6f')
+                np.savetxt(os.path.join('MakeItTalk/examples', filename), fake_fls_np, fmt='%.6f')
 
 
     def __close_face_lip__(self, fl):

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import math
-from core.coord_conv import CoordConvTh
+from thirdparty.AdaptiveWingLoss.core.coord_conv import CoordConvTh
 
 
 def conv3x3(in_planes, out_planes, strd=1, padding=1,
